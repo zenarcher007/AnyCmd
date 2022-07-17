@@ -9,7 +9,7 @@ Use "-p/--print" to print command output to improve readability, rather than out
 !pip install git+https://github.com/zenarcher007/AnyCmd.git  
 %load_ext anycmd
 ___
-##### %%any -- clang++ -O3 %FILE.cpp -o file && ./file
+##### %%any -p -- clang++ -O3 %FILE.cpp -o file && ./file
 
 \#include \<iostream\>  
 using namespace std;  
