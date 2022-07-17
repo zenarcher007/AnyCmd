@@ -39,13 +39,21 @@ class AnyCmd(ipym.Magics):
   @ipym.cell_magic
   def any(self, line, cell):
     args = self.argparser.parse_args(line.split())
+    output = None
+    currentDir = os.getcwd() # Save current working directory
     with tempfile.TemporaryDirectory() as tmpDir:
       if args.dir:
         os.chdir(args.dir)
       else:
         os.chdir(tmpDir)
       cmdArgs = self.parseFileMagics(tmpDir, args.rest, cell)
-      subprocess.run(' '.join(cmdArgs), shell=True) #stderr=subprocess.STDOUT)
+      try:
+        output = subprocess.check_output(' '.join(cmdArgs), shell = True, stderr=subprocess.STDOUT).decode('utf8')
+      except subprocess.CalledProcessError as e:
+        print(e.output.decode('utf8'))
+        print(e)
+    os.chdir(currentDir) # Restore current working directory
+    return output
       
 def load_ipython_extension(ip):
   any_magic = AnyCmd(ip)
