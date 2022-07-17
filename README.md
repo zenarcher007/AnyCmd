@@ -4,8 +4,8 @@ AnyCmd is a versatile Jupyter cell magic that allows you to run a cell with any 
 By default, the command specified after the magic will be run in a temporary working directory. However, you can specify a custom location using "-d/--dir"; use "-d ." if you would like your cell to be run in the current working directory. 
 
 #### Example (compiling and running c++):  
-!git config --global url.\"https://github.com/\".insteadOf git://github.com/
-!pip install git+https://github.com/zenarcher007/AnyCmd.git
+!git config --global url.\"https://github.com/\".insteadOf git://github.com/  
+!pip install git+https://github.com/zenarcher007/AnyCmd.git  
 %load_ext anycmd
 ___
 ##### %%any clang++ -O3 %FILE.cpp -o file && ./file
