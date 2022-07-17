@@ -5,11 +5,12 @@ import os
 import subprocess
 
 def defArgparse():
-  p = argparse.ArgumentParser(description = "AnyCmd arguments")
-  p.add_argument("-d", "--dir", action = "store", type = str, help = "Working directory") # Working dir.
-  # AnyCmd uses a temporary by default. Use "-d/--dir ." to prevent this.
+  p = argparse.ArgumentParser(description = "AnyCmd")
+  # AnyCmd uses a temporary working directory by default. Use "-d/--dir <directory>" to override this.
+  p.add_argument("-d", "--dir", action = "store", type = str, help = "Run cell command in the specified working directory, rather than a temporary directory. Use \".\" for current directory.") # Working dir.
+  p.add_argument("-p", "--print", action = "store_true", default = False, help = "Print command output instead of outputting it to a jupyter cell. This may improve readability of the output.")
   
-  # To explicitly separate arguments from magic from those of your command, use "--"
+  # To explicitly separate arguments from the magic from those of your command, use "--"
   p.add_argument("rest", nargs = argparse.REMAINDER)
   return p
 
@@ -46,13 +47,22 @@ class AnyCmd(ipym.Magics):
         os.chdir(args.dir)
       else:
         os.chdir(tmpDir)
-      cmdArgs = self.parseFileMagics(tmpDir, args.rest, cell)
+        
+      remain = args.rest
+      if len(remain) > 0 and remain[0] == "--":
+        remain.pop(0) # Remove "--" argument
+      
+      cmdArgs = self.parseFileMagics(tmpDir, remain, cell)
       try:
         output = subprocess.check_output(' '.join(cmdArgs), shell = True, stderr=subprocess.STDOUT).decode('utf8')
       except subprocess.CalledProcessError as e:
         print(e.output.decode('utf8'))
         print(e)
     os.chdir(currentDir) # Restore current working directory
+    
+    if(args.print): # --print: Print output instead of outputting to a cell?
+      print(output)
+      output = None
     return output
       
 def load_ipython_extension(ip):
