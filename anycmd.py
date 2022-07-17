@@ -5,12 +5,13 @@ import os
 import subprocess
 
 def defArgparse():
-  p = argparse.ArgumentParser(description = "AnyCmd")
+  p = argparse.ArgumentParser(description = "Allows any command to be run as a cell magic.", prog = "AnyCmd", formatter_class = argparse.RawDescriptionHelpFormatter,
+      epilog = "Any argument starting with the literal string \"%FILE\" or \"%FILE.someExtension\" will be replaced with a path to a file with the cell contents.")
   # AnyCmd uses a temporary working directory by default. Use "-d/--dir <directory>" to override this.
   p.add_argument("-d", "--dir", action = "store", type = str, help = "Run cell command in the specified working directory, rather than a temporary directory. Use \".\" for current directory.") # Working dir.
-  p.add_argument("-p", "--print", action = "store_true", default = False, help = "Print command output instead of outputting it to a jupyter cell. This may improve readability of the output.")
+  p.add_argument("-p", "--print", action = "store_true", default = False, help = "Print command output, rather than outputting it to a jupyter cell. This may improve readability of the output.")
   
-  # To explicitly separate arguments from the magic from those of your command, use "--"
+  # To explicitly separate arguments for the magic from those of your command, use "--"
   p.add_argument("rest", nargs = argparse.REMAINDER)
   return p
 
