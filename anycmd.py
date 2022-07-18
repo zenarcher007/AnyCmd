@@ -13,7 +13,8 @@ def defArgparse():
   p.add_argument("-d", "--dir", action = "store", type = str, help = "Change into <directory> before running the cell command. Does not change temp file location (unless --inplace is specified).") # Working dir.
   p.add_argument("-p", "--print", action = "store_true", default = False, help = "Print command output instead of outputting it to a jupyter cell. This may improve readability of the output.")
   p.add_argument("-i", "--inplace", action = "store_true", default = False, help = "Write temporary cell contents files in the current working directory (see --dir), instead of a temporary directory. Has no effect unless --dir is specified.")
-  
+  p.add_argument("-l", "--lines", action = "store_true", default = False, help = "Add an additional newline character before the cell contents to correct references to line numbers in the file.")
+
   # To explicitly separate arguments for the magic from those of your command, use "--"
   p.add_argument("rest", nargs = argparse.REMAINDER)
   return p
@@ -37,10 +38,13 @@ class AnyCmd(ipym.Magics):
   # in "%FILE" with the temporary file's path. Includes text after the parameter as an extension
   # (ex: "%FILE.cpp" = /some/path/CELL_CONTENTS.cpp"). Returns these updated arguments, along with
   # a list of the paths of all temporary files used (for later cleanup).
-  def parseFileMagics(self, tmpDir, args, cell):
+  def parseFileMagics(self, tmpDir, args, cell, lines = False):
     resArgs = args
     tempFiles = [] # To return a list of the temporary files generated
     randId = uuid.uuid4() # Names of the temp files from this function call
+    prefix = ""
+    if lines:
+      prefix = "\n"
     for i in range(len(args)):
       arg = args[i]
       if arg.startswith('%FILE'):
@@ -49,7 +53,7 @@ class AnyCmd(ipym.Magics):
         tempFiles.append(fPath) # Save this path to return a list of temp files
         if not os.path.isfile(fPath):
           with open(fPath, "w") as f:
-            f.write(cell)
+            f.write(prefix + cell)
         resArgs[i] = fPath # Replace %FILE argument with new file path
     return (resArgs, tempFiles)
   
@@ -86,7 +90,7 @@ class AnyCmd(ipym.Magics):
         else:
           os.chdir(tmpDir)
       
-        cmdArgs, tempFiles = self.parseFileMagics(tmpDir, remain, cell)
+        cmdArgs, tempFiles = self.parseFileMagics(tmpDir, remain, cell, lines = args.lines)
         output = self.run(cmdArgs) # Run command, handling errors.
       
         if args.inplace: # Clean up temp files if created in custom work directory
