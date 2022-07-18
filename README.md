@@ -1,9 +1,12 @@
 # AnyCmd
 
-Do the provided cell magics not fit your needs? AnyCmd is a versatile Jupyter cell magic that allows you to run a cell with any utility. Simply specify the command you want to run as arguments after the magic. Access the contents of the cell as a file using the literal string "%FILE" or "%FILE.someExtension"  
-By default, the command specified after the magic will be run in a temporary working directory. However, you can specify a custom location using "-d/--dir <directory>"; use "-d ." if you would like your cell command to be run in the current working directory.  
-Use "-p/--print" to print command output, rather than outputting to the cell. This can improve readability.  
-Use "-i/--inplace" to write the actual temp files containing the cell contents in the specified working directory (--dir).
+&nbsp;&nbsp;&nbsp;&nbsp;Do the provided cell magics not quite fit your needs? AnyCmd is a versatile Jupyter cell magic that allows you to run a cell with any utility. Simply specify the command you want to run as arguments after the magic. Access the contents of the cell as a file using the literal string "%FILE" or "%FILE.someExtension"  
+&nbsp;&nbsp;&nbsp;&nbsp;By default, the command specified after the magic will be run from a temporary working directory. However, you may use -d/--dir <directory> to chdir into a custom directory before running the cell command. Use "-d ." to run it in the current working directory.  
+&nbsp;&nbsp;&nbsp;&nbsp;Use -i/--inplace if you would like to write the cell contents temp files in the specified working directory, rather than the temporary directory (has no effect without --dir). This may help with compilers that reference libraries in the same directory, for instance.
+&nbsp;&nbsp;&nbsp;&nbsp;Use "-p/--print" to print command output instead of outputting to the cell. This can improve readability.  
+
+  
+  
 
 #### Example (compiling and running c++):  
 !git config --global url.\"https://github.com/\".insteadOf git://github.com/  
