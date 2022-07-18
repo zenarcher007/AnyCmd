@@ -12,7 +12,7 @@ def defArgparse():
   # AnyCmd uses a temporary working directory by default. Use "-d/--dir <directory>" to override this.
   p.add_argument("-d", "--dir", action = "store", type = str, help = "Change into <directory> before running the cell command. Does not change temp file location (unless --inplace is specified).") # Working dir.
   p.add_argument("-p", "--print", action = "store_true", default = False, help = "Print command output instead of outputting it to a jupyter cell. This may improve readability of the output.")
-  p.add_argument("-i", "--inplace", action = "store_true", default = False, help = "Write temporary cell contents files in the current working directory (see --dir), instead of a temporary directory. Has no effect unless --dir is specified.)
+  p.add_argument("-i", "--inplace", action = "store_true", default = False, help = "Write temporary cell contents files in the current working directory (see --dir), instead of a temporary directory. Has no effect unless --dir is specified.")
   
   # To explicitly separate arguments for the magic from those of your command, use "--"
   p.add_argument("rest", nargs = argparse.REMAINDER)
