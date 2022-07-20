@@ -7,20 +7,20 @@
 &nbsp;&nbsp;&nbsp;&nbsp;-l/--lines adds a newline character before the cell contents in the temporary file to offset the first line taken up by the cell magic. This may help prevent interpreter error messages that reference a line number one line before the actual error when jupyter line numbers are enabled.
 
   
-  
+#### You may install this package via PyPi:
+```python3 -m pip install anycmd-jupyter-magic```
 
 #### Example (compiling and running c++):  
-!git config --global url.\"https://github.com/\".insteadOf git://github.com/  
-!pip install git+https://github.com/zenarcher007/AnyCmd.git  
-%load_ext anycmd
 ___
-##### %%any -p -- clang++ -O3 %FILE.cpp -o file && ./file
+```
+%%any -p -- clang++ -O3 %FILE.cpp -o file && ./file
 
-\#include \<iostream\>  
+#include <iostream>  
 using namespace std;  
 int main(int argc, const char** argv) {  
-&nbsp;&nbsp;&nbsp;&nbsp;cout << "Hello World\n";  
+  cout << "Hello World\n";  
 }  
+```
 ___
 Result:  
 Hello World  
