@@ -5,6 +5,7 @@ import os
 import subprocess
 import uuid
 import contextlib
+import sys
 
 def defArgparse():
   p = argparse.ArgumentParser(description = "Allows any command to be run as a cell magic.", prog = "AnyCmd", formatter_class = argparse.RawDescriptionHelpFormatter,
@@ -25,14 +26,30 @@ class AnyCmd(ipym.Magics):
     super(AnyCmd, self).__init__(shell)
     self.argparser = defArgparse()
 
-  def run(self, cmdArgs):
+  # Runs a process, capturing and returning output
+  def runWithOutput(self, cmdArgs):
     output = None
     try:
       output = subprocess.check_output(' '.join(cmdArgs), shell = True, stderr=subprocess.STDOUT).decode('utf8')
     except subprocess.CalledProcessError as e:
-      print(e.output.decode('utf8'))
-      print(e)
+      print(e.output.decode('utf8'), file = sys.stderr)
+      print(e, file = sys.stderr)
     return output
+
+  # Runs a process, printing output directly to stdout line by line. Does not capture output.
+  def run(self, cmdArgs):
+    cmd = ' '.join(cmdArgs)
+    try:
+      proc = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+      while proc.poll() is None:
+        print(proc.stdout.readline().decode('utf8'), end = '')
+      proc.communicate()
+      
+      if(proc.returncode != 0):
+        print("Command \"" + cmd + "\" returned non-zero exit code " + str(proc.returncode), file = sys.stderr)
+
+    except subprocess.CalledProcessError as e:
+      print(e, file = sys.stderr)
 
   # Makes a temporary file with the cell's contents, and replaces anything starting
   # in "%FILE" with the temporary file's path. Includes text after the parameter as an extension
@@ -75,7 +92,6 @@ class AnyCmd(ipym.Magics):
       remain.pop(0) # Remove "--" argument
     
     output = None
-    #currentDir = os.getcwd()
     
     tmpLocation = None
     if args.inplace and args.dir: # Use the working directory, --dir, for temp files as well?
@@ -85,21 +101,19 @@ class AnyCmd(ipym.Magics):
     
     with tmpLocation as tmpDir:
       with self.saveDir(): # Save current working directory
-        if args.dir: # --dir    Change into specified directory, or else a temporary working directory
-          os.chdir(args.dir)
-        else:
-          os.chdir(tmpDir)
+        os.chdir(tmpDir) # Change into temporary directory or specified directory
       
         cmdArgs, tempFiles = self.parseFileMagics(tmpDir, remain, cell, lines = args.lines)
-        output = self.run(cmdArgs) # Run command, handling errors.
+        
+        if(args.print): # --print: Print output instead of outputting to a cell?
+          self.run(cmdArgs) # Run command, handling errors.
+        else:
+          output = self.runWithOutput(cmdArgs)
       
         if args.inplace: # Clean up temp files if created in custom work directory
           for file in tempFiles:
             os.remove(file)
-    
-      if(args.print): # --print: Print output instead of outputting to a cell?
-        print(output)
-        output = None
+
     return output
       
 def load_ipython_extension(ip):
