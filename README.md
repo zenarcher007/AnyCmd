@@ -8,7 +8,7 @@
 
   
 #### You may install this package via PyPi:
-```python3 -m pip install anycmd-jupyter-magic```
+```pip install anycmd-jupyter-magic```
 
 #### Example (compiling and running c++):  
 ___
