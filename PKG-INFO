@@ -1,0 +1,24 @@
+Metadata-Version: 1.1
+Name: anycmd-jupyter-magic
+Version: 0.1.1
+Summary: A versatile Jupyter cell magic that allows running a cell with any command line utility.
+Home-page: https://github.com/zenarcher007/AnyCmd
+Author: Justin Douty
+Author-email: jdouty03@icloud.com
+License: MIT
+Description: This package provides a line magic for running any shell command on the contents of a cell in an IPython notebook.
+Keywords: ipython, jupyter, magic, cell magic, command
+Platform: any
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Framework :: IPython
+Classifier: Framework :: Jupyter
+Classifier: Framework :: Jupyter :: JupyterLab
+Classifier: Framework :: Jupyter :: JupyterLab :: Extensions
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3.7
