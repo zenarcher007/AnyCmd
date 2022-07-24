@@ -39,22 +39,19 @@ class AnyCmd(ipym.Magics):
   # Runs a process, printing output directly to stdout line by line. Does not capture output.
   def run(self, cmdArgs):
     cmd = ' '.join(cmdArgs)
-    try:
-      proc = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
-      while proc.poll() is None:
-        line = proc.stdout.readline()
-        for line in proc.stdout: # Note: Python has no control over the process's internal buffering.
-          try:                   # The process will need to flush its own output periodically to update in the cell.
-            print(line.decode('utf8'), end = '')
-          except UnicodeDecodeError:
-            print(line) # Print as bytes to still let you see what the line contains
+    proc = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+      
+    while proc.poll() is None:
+      for line in proc.stdout: # Note: Python has no control over the process's internal buffering.
+        try:                   # The process will need to flush its own output periodically to update in the cell.
+          print(line.decode('utf8'), end = '')
+        except UnicodeDecodeError:
+          print(line) # Print as bytes to still let you see what the line contains
       proc.communicate()
       
-      if(proc.returncode != 0):
-        print("Command \"" + cmd + "\" returned non-zero exit code " + str(proc.returncode), file = sys.stderr)
+    if(proc.returncode != 0):
+      print("Command \"" + cmd + "\" returned non-zero exit code " + str(proc.returncode), file = sys.stderr)
 
-    except subprocess.CalledProcessError as e:
-      print(e, file = sys.stderr)
 
 
   # Makes a temporary file with the cell's contents, and replaces anything starting

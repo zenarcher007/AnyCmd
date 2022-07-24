@@ -16,12 +16,12 @@
 #### Example (compiling and running c++):  
 ___
 ```
-%%any -p -- clang++ -O3 %FILE.cpp -o file && ./file
+%%any -p -l -- clang++ -O3 %FILE.cpp -o file && ./file
 
 #include <iostream>  
 using namespace std;  
 int main(int argc, const char** argv) {  
-  cout << "Hello World\n" << std::flush;  
+  cout << "Hello World\n";  
 }  
 ```
 ___
