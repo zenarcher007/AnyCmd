@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='anycmd-jupyter-magic',
-    version = '0.1.1',
+    version = '0.1.2',
     packages = setuptools.find_packages(),
     author = 'Justin Douty',
     author_email = "jdouty03@icloud.com",
