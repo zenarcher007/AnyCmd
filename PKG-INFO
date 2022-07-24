@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: anycmd-jupyter-magic
-Version: 0.1.1
+Version: 0.1.2
 Summary: A versatile Jupyter cell magic that allows running a cell with any command line utility.
 Home-page: https://github.com/zenarcher007/AnyCmd
 Author: Justin Douty
