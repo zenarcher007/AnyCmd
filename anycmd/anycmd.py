@@ -12,9 +12,10 @@ def defArgparse():
       epilog = "Any argument starting with the literal string \"%FILE\" or \"%FILE.someExtension\" will be replaced with a path to a file with the cell contents.")
   # AnyCmd uses a temporary working directory by default. Use "-d/--dir <directory>" to override this.
   p.add_argument("-d", "--dir", action = "store", type = str, help = "Change into <directory> before running the cell command. Does not change temp file location (unless --inplace is specified).") # Working dir.
-  p.add_argument("-p", "--print", action = "store_true", default = False, help = "Print command output instead of outputting it to a jupyter cell. This may improve readability of the output.")
+  p.add_argument("-p", "--print", action = "store_true", default = False, help = "Print command output by lines instead of outputting the final result to a jupyter cell. This may improve readability of the output.")
   p.add_argument("-i", "--inplace", action = "store_true", default = False, help = "Write temporary cell contents files in the current working directory (see --dir), instead of a temporary directory. Has no effect unless --dir is specified.")
-  p.add_argument("-l", "--lines", action = "store_true", default = False, help = "Add an additional newline character before the cell contents to correct references to line numbers in the file.")
+  p.add_argument("--nonewline", action = "store_true", default = False, help = "Do NOT an additional newline character before the cell contents to correct references to line numbers in the file (changed in 0.1.4)")
+
 
   # To explicitly separate arguments for the magic from those of your command, use "--"
   p.add_argument("rest", nargs = argparse.REMAINDER)
@@ -58,13 +59,11 @@ class AnyCmd(ipym.Magics):
   # in "%FILE" with the temporary file's path. Includes text after the parameter as an extension
   # (ex: "%FILE.cpp" = /some/path/CELL_CONTENTS.cpp"). Returns these updated arguments, along with
   # a list of the paths of all temporary files used (for later cleanup).
-  def parseFileMagics(self, tmpDir, args, cell, lines = False):
+  def parseFileMagics(self, tmpDir, args, cell, nonewline = False):
     resArgs = args
     tempFiles = [] # To return a list of the temporary files generated
     randId = uuid.uuid4() # Names of the temp files from this function call
-    prefix = ""
-    if lines:
-      prefix = "\n"
+    prefix = "" if nonewline else "\n"
     for i in range(len(args)):
       arg = args[i]
       if arg.startswith('%FILE'):
@@ -106,7 +105,7 @@ class AnyCmd(ipym.Magics):
       with self.saveDir(): # Save current working directory
         os.chdir(tmpDir) # Change into temporary directory or specified directory
       
-        cmdArgs, tempFiles = self.parseFileMagics(tmpDir, remain, cell, lines = args.lines)
+        cmdArgs, tempFiles = self.parseFileMagics(tmpDir, remain, cell, nonewline = args.nonewline)
         
         if(args.print): # --print: Print output instead of outputting to a cell?
           self.run(cmdArgs) # Run command, handling errors.
